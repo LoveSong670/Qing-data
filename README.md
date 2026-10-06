@@ -85,3 +85,32 @@ encrypt   = false     (BOOLEAN)
 ```
 
 本库的原始文件里**这两个 TAG 不存在**。
+
+## 闸门字段（重要）
+
+本库**不含** `type` 与 `encrypt` 两个 TAG。X 读取配置的方式是：
+
+```sql
+SELECT * FROM DATA WHERE ACCOUNT = ? AND TAG = ?
+```
+
+查不到就走默认值 —— `encrypt` 默认为 `true`，X 会因此走 native 分支。
+导入后请补齐：
+
+| TAG | TYPE | 明文值 |
+|---|---|---|
+| `type` | STRING | `free` |
+| `encrypt` | BOOLEAN | `false` |
+| `valid` | BOOLEAN | `true` |
+| `permaban` | BOOLEAN | `false` |
+
+VALUE 用 AES-256-CBC 加密后写入：
+
+```
+key = SHA-256("d9b2f72ea7d9c9578493fafbc913c24d")
+IV  = 16 x 0x00
+```
+
+## 许可
+
+仅供本地测试与研究使用。
